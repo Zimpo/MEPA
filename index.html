@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+    <title>Caisse enregistreuse</title>
+		<link rel="icon" href="ressources/logo.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+		<link href="css/style.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <h2 style="background-color: lightgreen" id="title">Bonjour XXX, vous êtes sur la caisse n°1</h2>
+    <br>
+    <h4>Veuillez rentrer le code du produit :</h4>
+    <br>
+    
+    <center id="chat_submit">
+      <form class="form-inline justify-content-center" action="/" method="post" id="form_article">
+        <input class="form-control" type="text" id="article_box" placeholder="Ex: XNS34"/>
+        <input class="btn btn-success" type="submit" id="send" value="Valider"/>
+      </form>
+    <center/>
+    <br>
+
+    <div id="ticket_de_caisse" class="col-lg-3">
+      <h6><i><b>TICKET DE CAISSE</b></i></h6>
+      <br>
+      <section id="chat_zone" style="display: inline-block; text-align: left"></section>
+      <br>
+      <p>----------------------</p>
+      <p id="total"></p>
+    </div>
+
+    <!--<div class="row">
+      <div class="col-sm-6">
+        <section id="chat_zone" style="display: inline-block; text-align: left"></section>
+      </div>
+
+      <div class="col-sm-6">
+        <section id="desc_zone" style="display: inline-block; text-align: left"></section>
+      </div>
+    </div>-->
+
+    <br>
+    <button type="button" class="btn btn-success" onclick="return vente();">Terminer la vente</button>
+    <button type="button" class="btn btn-success" onclick="return historique();">Afficher l'historique</button>
+    <br><br><hr>
+
+    <!--API-->
+    <h4>Testez vos connaissances</h4>
+    <br>
+    <button type="button" class="btn btn-success" onclick="return country();">Jouer</button>
+
+    <p id="country"></p>
+    <p id="capital"></p>
+    <center id="country_submit">
+      <form class="form-inline justify-content-center" action="/" method="post" id="form_country">
+        <input class="form-control" type="text" id="country_box" placeholder="Ex: France"/>
+        <input class="btn btn-primary" type="submit" id="send" value="Répondre"/>
+      </form>
+    <center/>
+  
+    <div class="row">
+      <section id="city_zone" style="display: inline-block; text-align: left">
+        </section>
+    </div>
+    <br>
+
+    <footer id="footer">
+      <p>&copy; URSI 2018 - Application caisse enregistreuse</p>
+    </footer>
+
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var ip = "localhost";
+      var port = 8080;
+
+      var socket = io.connect('http://' + ip + ':' + port);
+
+      var pseudo = prompt("Quelle est ton nom ?");
+      socket.emit('new_user', pseudo);
+      document.getElementById("title").innerHTML = "Bonjour " + pseudo + ", vous êtes sur la caisse n°1";
+
+      socket.on('new_msg', function(message)
+      {
+        insertMessage(message.user, message.content);
+      });
+
+      socket.on("new_article", function(product)
+      {
+        insertMessage(product.name, product.price);
+        insertDescription(product);
+      });
+
+      socket.on("total", function(price)
+      {
+        document.getElementById("total").innerHTML = "Prix total : " + price.price + "€";
+      });
+
+      socket.on("new_country", function(country)
+      {
+        document.getElementById("country").innerHTML = "Quelle est la capital de " + country.country;
+      });
+
+      socket.on("new_capital", function(message)
+      {
+        document.getElementById("capital").innerHTML = message.message;
+      });
+
+      $('#form_vente').submit(function()
+      {
+         socket.emit('new_vente');
+         return false;
+      });
+
+      $('#form_article').submit(function()
+      {
+         var code = $('#article_box').val();
+         socket.emit('new_article', code);
+         $('#article_box').val('');
+         return false;
+      });
+
+      /*COUNTRY*/
+      function country()
+      {
+        socket.emit('new_country');
+      }
+
+      $('#form_country').submit(function()
+      {
+        var country = $('#country_box').val();
+        console.log(country);
+        socket.emit('new_capital', country);
+        //var capital = document.getElementById("capital").val();
+        return false; 
+        /*if (capital = country)
+        {
+          document.getElementById("capital").innerHTML = "Bien joué";
+        }
+        else
+        {
+          document.getElementById("capital").innerHTML = "Faux";
+        }*/
+          //socket.emit('new_country', country);
+          //$('#country_box').val(''); 
+      });
+
+      function historique()
+      {
+        socket.emit('historique');
+      }
+
+      function vente()
+      {
+        socket.emit('new_vente');
+      }
+   
+      function insertMessage(name, message)
+      {
+        $('#chat_zone').prepend('<p style="text-align: left"><i>' + '1 * ' + name
+        + ' à ' + message + '€' + '</i></p>');
+      }
+
+      function insertDescription(product)
+      {
+        $('#desc_zone').text('');
+        $('#desc_zone').append('<h3>Description</h3><br>'
+        +'<p><strong>name</strong>' + ' : ' + product.name + '</p>'
+        +'<p><strong>code</strong>' + ' : ' + product.code + ' </p>'
+        +'<p><strong>price</strong>' + ' : ' + product.price + ' (en centimes)</p>'
+        +'<p><strong>description</strong>' + ' : ' + product.desc + '</p>');
+      }
+    </script>
+  </body>
+</html>

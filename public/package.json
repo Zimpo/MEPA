@@ -1,0 +1,17 @@
+{
+	"name": "todolist",
+	"version": "0.1.0",
+	"dependencies": {
+    "python-shell": "latest",
+    "socket.io": "latest",
+		"path": "latest",
+    "express": "~4.11.0",
+		"ejs": "~2.1.4",
+		"cookie-session": "~1.1.0",
+		"body-parser": "~1.10.1"		
+		},
+	"pg": "latest",
+	"ajax": "latest",
+	"authors": "zimpo <ziwiakowsky.paul@gmail.com>",
+	"description": "creation chatbot"
+}

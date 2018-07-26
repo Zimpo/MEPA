@@ -1,0 +1,26 @@
+# ursi-app
+
+alors pour lancer l'app il faut :
+
+1.- tu vas dans public/ ensuite tu fais execute 'npm install'
+	- Bon je crois ca marche pas tj du coup t'ouvres le fichier et tu fais :
+		'npm install pg' par exemple et ca pour tout les modules qui sont ecrit.
+		/!\ si tas pas npm comme commande faut l'installer
+	- Ca va créer un dossier node_modules qui doit etre a la racine du dossier
+	/!\ a ne pas push chacun a le sien
+
+2.- tu créer ton postgresql dans ton env pas besoin de creer d'utilisateur ni de mdp
+	- tu créer une base de donnee du nom de 'ursidb' 
+	- command : 'create database ursidb'
+	- tu lances le script qui se trouve dans db/init.sql
+		- command : '\i db/init.sql' depuis ton postgres 
+		/!\ ca depend ou tu te trouves pour le chemin
+
+3.- ensuite tu executes le fichier server.js
+	- command : 'node server.js'
+
+4.- ensuite tu vas dans ton navigateur préféré et tu mets rentre l'url
+	- command : 'localhost:8080'
+	/!\ pour tester un produit tu vas dans le script init.sql et tu rentres le code de ton choix
+
+Voili-Voilou
